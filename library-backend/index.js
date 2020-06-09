@@ -104,11 +104,13 @@ const typeDefs = gql`
 
   type Mutation {
     addBook(
-      title: String!,
-      author: String!,
-      published: Int!,
+      title: String!
+      author: String!
+      published: Int!
       genres: [String!]
     ): Book
+
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
 
@@ -146,14 +148,24 @@ const resolvers = {
   Mutation: {
     addBook(root, args) {
       const book = { ...args, id: uuid() };
-      books = [ ...books, book ];
-      const userExists = authors.find(author => author.name === book.author);
+      books = [...books, book];
+      const userExists = authors.find((author) => author.name === book.author);
       if (!userExists) {
-        authors = [ ...authors, { name: book.author, id: uuid() } ];
+        authors = [...authors, { name: book.author, id: uuid() }];
       }
-      return books.find(b => b.id === book.id);
-    }
-  }
+      return books.find((b) => b.id === book.id);
+    },
+    editAuthor(root, args) {
+      let author = authors.find((a) => a.name === args.name);
+      if (author) {
+        author.born = args.setBornTo;
+        const authorsDbUpdate = authors.filter((a) => a.name !== author.name);
+        authors = [...authorsDbUpdate, author];
+        return author;
+      }
+      return;
+    },
+  },
 };
 
 const server = new ApolloServer({
