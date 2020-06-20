@@ -23,6 +23,9 @@ const Authors = (props) => {
 
   const editBirthYear = async (e) => {
     e.preventDefault();
+    console.log(name)
+
+    if (!name) return alert('Please select an author');
 
     editAuthor({
       variables: {
@@ -59,9 +62,15 @@ const Authors = (props) => {
 
       <h2>Set Birth year</h2>
       <form onSubmit={ editBirthYear }>
-        <label>Name: </label>
-        <input type="text" value={ name } onChange={ ({ target }) => setName(target.value)} />
-        <label>Age: </label>
+        <select value={ name } onChange={({ target }) => setName(target.value)}>
+          <option value={null}>Select author</option>
+          {authors &&
+            authors.data.allAuthors.map(author => (
+              <option key={author.name} value={ author.name }>{ author.name }</option>
+            ))}
+        </select>
+
+        <label>Born</label>
         <input type="number" value={ age } onChange={ ({ target }) => setAge(target.value)} />
         <button type="submit">Update author</button>
       </form>
