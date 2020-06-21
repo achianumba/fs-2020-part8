@@ -29,11 +29,16 @@ const allBooks = async (root, args) => {
     return getBooks();
 };
 
+const me = async (root, args, context) => {
+    return context.user
+};
+
 const Query = {
     allBooks,
     allAuthors: async () => getAuthors(),
     bookCount: async () => countBooks(),
-    authorCount: () => countAuthors()
+    authorCount: () => countAuthors(),
+    me
 };
 
 module.exports = Query;
