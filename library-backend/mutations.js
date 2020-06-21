@@ -1,3 +1,5 @@
+const { UserInputError } = require('apollo-server');
+
 const { 
   createAuthor,
   getAuthorByName,
@@ -23,10 +25,11 @@ const addBook = async (root, args) => {
       author: author._id
     });
 
-    console.log(book.toJSON());
     return book.toJSON();
   } catch (err) {
-    console.error(err)
+    throw new UserInputError(err.message, {
+      invalidArgs: args
+    });
   }
 };
 
@@ -35,7 +38,9 @@ const editAuthor = async (root, args) => {
     const updatedAuthor = await editAuthorBirthYear(args.name, args.setBornTo);
     return updatedAuthor.toJSON();
   } catch(err) {
-    console.error(err);
+    throw new UserInputError(err.message, {
+      invalidArgs: args
+    });
   }
 };
 
