@@ -23,6 +23,9 @@ const connectToMongoDB = () => {
     });
 }
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 module.exports = {
-    connectToMongoDB
+    connectToMongoDB,
+    JWT_SECRET
 };
