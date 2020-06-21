@@ -11,7 +11,8 @@ const userSchema = new Schema({
         type: String,
         minlength: 4,
         required: true
-    }
+    },
+    favoriteGenre: { type: String }
 });
 
 userSchema.set('toJSON', {
@@ -19,7 +20,7 @@ userSchema.set('toJSON', {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
         delete returnedObject.__v;
-        delete password;
+        delete returnedObject.password;
     }
 });
 
@@ -33,7 +34,12 @@ const getUserByUserId = (id) => {
     return User.findById(id);
 }
 
+const addUser = (user) => {
+    return new User(user).save();
+}
+
 module.exports = {
     getUserByUsername,
-    getUserByUserId
+    getUserByUserId,
+    addUser
 }
