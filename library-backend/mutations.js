@@ -1,6 +1,6 @@
-const { UserInputError } = require('apollo-server');
+const { UserInputError, AuthenticationError } = require('apollo-server');
 const { hash, compare } = require('bcrypt');
-const { sign, decode } = require('jsonwebtoken');
+const { sign } = require('jsonwebtoken');
 const { addUser, getUserByUsername } = require('./models/users');
 const { JWT_SECRET } = require('./utils/config');
 
@@ -12,7 +12,11 @@ const {
 
 const { createBook } = require('./models/books');
 
-const addBook = async (root, args) => {
+const addBook = async (root, args, context) => {
+  if (!context.user) {
+    throw new Error('Only logged in users may add a book to the library');
+  }
+
   try {
     //check if  author exists
     let author = await (await getAuthorByName(args.author));
@@ -37,7 +41,11 @@ const addBook = async (root, args) => {
   }
 };
 
-const editAuthor = async (root, args) => {
+const editAuthor = async (root, args, context) => {
+  if (!context.user) {
+    throw new AuthenticationError('Only logged in users may edit author details');
+  }
+
   try {
     const updatedAuthor = await editAuthorBirthYear(args.name, args.setBornTo);
     return updatedAuthor.toJSON();
@@ -56,10 +64,11 @@ const createUser = async (root, args) => {
       ...args,
       password
     });
-
-    console.log(user.toJSON());
+    return user.toJSON();
   } catch(err) {
-    console.error(err);
+    throw new UserInputError(err.message, {
+      invalidArgs: args
+    });
   }
 };
 
@@ -76,7 +85,7 @@ const login = async(root, args) => {
     const isCorrectPassword = await compare(args.password, user.password);
     
     if (!isCorrectPassword) {
-      throw new Error('You have entered an incorrect username or password');
+      throw new AuthenticationError('You have entered an incorrect username or password');
     }
 
     const userForToken = {

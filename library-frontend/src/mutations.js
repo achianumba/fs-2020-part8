@@ -20,3 +20,23 @@ mutation EditAuthor($name: String!, $setBornTo: Int!) {
     }
 }
 `;
+
+export const LOGIN = gql`
+mutation Login($username: String!, $password: String!) {
+    login(username: $username password: $password) {
+        value
+    }
+}
+`;
+
+export const SIGN_UP = gql`
+mutation Signup($username: String!, $password: String!, $favoriteGenre: String!) {
+        createUser(
+            username: $username
+            password: $password
+            favoriteGenre: $favoriteGenre
+        ) {
+            username
+        }
+    }
+`;

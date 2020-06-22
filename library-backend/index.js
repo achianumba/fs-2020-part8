@@ -12,7 +12,7 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null;
-
+    
     if (auth && auth.toLocaleLowerCase().startsWith('bearer ')) {
       const token = await verify(auth.slice(7), JWT_SECRET);
       const user = await getUserByUserId(token.id);

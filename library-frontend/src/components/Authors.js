@@ -23,7 +23,6 @@ const Authors = (props) => {
 
   const editBirthYear = async (e) => {
     e.preventDefault();
-    console.log(name)
 
     if (!name) return alert('Please select an author');
 
