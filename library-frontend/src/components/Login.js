@@ -8,7 +8,7 @@ const Login = (props) => {
   const [loginUser] = useMutation(LOGIN, {
     ignoreResults: false,
     onCompleted: ({ login: { value } }) => {
-      localStorage.setItem('token', value);
+      props.setToken(value);
       setUsername('');
       setPassword('');
       alert('logged in successfully');
