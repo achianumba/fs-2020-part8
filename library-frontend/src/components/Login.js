@@ -9,6 +9,7 @@ const Login = (props) => {
     ignoreResults: false,
     onCompleted: ({ login: { value } }) => {
       props.setToken(value);
+      localStorage.setItem('token', value);
       setUsername('');
       setPassword('');
       alert('logged in successfully');
