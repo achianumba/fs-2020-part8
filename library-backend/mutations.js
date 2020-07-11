@@ -94,7 +94,8 @@ const login = async(root, args) => {
     }
 
     return {
-      value: sign(userForToken, JWT_SECRET)
+      value: sign(userForToken, JWT_SECRET),
+      favoriteGenre: user.favoriteGenre
     }
   } catch(err) {
     throw new UserInputError(err.message, {

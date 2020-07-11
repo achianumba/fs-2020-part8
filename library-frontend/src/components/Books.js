@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { ALL_BOOKS } from '../queries';
 
-const Books = (props) => {
-  const { loading, data } = useQuery(ALL_BOOKS);
+const Books = ({ show, loading, data }) => {
   const [genre, setGenre] = useState(null);
   // Dynamically set books to display
   let books = genre && data ? data.allBooks.filter(b => b.genres.includes(genre)) : !genre && data ? data.allBooks : null;
@@ -23,7 +20,7 @@ const Books = (props) => {
     }
   }
 
-  if (!props.show) {
+  if (!show) {
     return <></>
   }
 

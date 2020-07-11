@@ -8,7 +8,8 @@ const typeDefs = gql`
   }
 
   type Token {
-    value: String!
+    value: String!,
+    favoriteGenre: String!
   }
 
   type Author {
