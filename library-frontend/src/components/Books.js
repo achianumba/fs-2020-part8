@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useQuery } from '@apollo/client';
+import { ALL_BOOKS } from '../queries';
 
-const Books = ({ show, loading, data }) => {
+const Books = ({ show }) => {
   const [genre, setGenre] = useState(null);
+  const { loading, data } = useQuery(ALL_BOOKS);
   // Dynamically set books to display
   let books = genre && data ? data.allBooks.filter(b => b.genres.includes(genre)) : !genre && data ? data.allBooks : null;
   //Extract genres into an array of unique values
