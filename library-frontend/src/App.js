@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Recommended from './components/Recommended';
-import { useQuery } from '@apollo/client';
-import { ALL_BOOKS } from './queries';
 
 const App = () => {
   const [page, setPage] = useState('authors');
   const [token, setToken] = useState(null);
-  const booksRequest = useQuery(ALL_BOOKS);
+
+  useEffect(() => {
+    if (localStorage.token) {
+      setToken(localStorage.token);
+    }
+  }, []);
 
   const logout = e => {
     setToken(null);
@@ -37,14 +40,10 @@ const App = () => {
 
       <Books
         show={page === 'books'}
-        loading={booksRequest.loading}
-        data={booksRequest.data}
       />
 
       <Recommended
         show={page === 'recommended'}
-        loading={booksRequest.loading}
-        data={booksRequest.data}
       />
 
       <NewBook
