@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from "react";
+import { useLazyQuery } from '@apollo/client';
+import { FAV_GENRE } from '../queries';
 
-const Recommended = ({ show, loading, data }) => {
+const Recommended = ({ show }) => {
   const [favs, setFavs] = useState(null);
+  const [favsRequest] = useLazyQuery(FAV_GENRE, {
+    ignoreResults: false,
+    onError: (err) => {
+      alert('Unable to fetch books in favorite genre from the server:\n', err);
+    },
+    onCompleted: ({ allBooks }) => {
+      setFavs(allBooks);
+    }
+  });
 
   useEffect(() => {
     const favoriteGenre = localStorage.getItem('favoriteGenre');
+    if (!favs && favoriteGenre) {
+      favsRequest({variables: {
+        genre: 'crime'
+      }});
+    }
+  }, [favs, favsRequest]);
 
-    const books = favoriteGenre && data ? data.allBooks.filter((book) => {
-      return book.genres.includes(favoriteGenre);
-    }) : null;
-
-    setFavs(books);
-  }, [localStorage, data]);
-
-  if (!show || loading) {
+  if (!show) {
     return <></>;
   }
 
