@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { ADD_BOOK } from '../mutations';
-import { ALL_BOOKS } from '../queries';
+import { ALL_BOOKS, FAV_GENRE } from '../queries';
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -16,15 +16,35 @@ const NewBook = (props) => {
     },
     //Update Cache
     update: (store, res) => {
+      const newBook = res.data.addBook
       // Update books view
       const booksInStore = store.readQuery({ query: ALL_BOOKS });
       store.writeQuery({
         query: ALL_BOOKS,
         data: {
           ...booksInStore,
-          allBooks: [ ...booksInStore.allBooks, res.data.addBook ]
+          allBooks: [ ...booksInStore.allBooks, newBook ]
         }
       });
+
+      //Update recommendations
+      const favGenre = localStorage.getItem('favoriteGenre');
+
+      if(newBook.genres.includes(favGenre)) {
+        const favsInStore = store.readQuery({
+          query: FAV_GENRE,
+          variables: { genre: favGenre }
+        });
+
+        store.writeQuery({
+          query: FAV_GENRE,
+          variables: { genre: favGenre },
+          data: {
+            ...favsInStore,
+            allBooks: [...favsInStore.allBooks, newBook]
+          }
+        });
+      }
     }
   });
 

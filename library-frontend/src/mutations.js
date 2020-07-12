@@ -9,6 +9,7 @@ mutation AddBook($title: String!, $author: String! $published: Int!, $genres: [S
             genres: $genres
         ) {
             title
+            genres
         }
     }
 `;
