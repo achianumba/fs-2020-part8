@@ -1,8 +1,10 @@
-const { UserInputError, AuthenticationError } = require('apollo-server');
+const { UserInputError, AuthenticationError, PubSub } = require('apollo-server');
 const { hash, compare } = require('bcrypt');
 const { sign } = require('jsonwebtoken');
 const { addUser, getUserByUsername } = require('./models/users');
 const { JWT_SECRET } = require('./utils/config');
+
+const pubsub = new PubSub();
 
 const { 
   createAuthor,
@@ -16,6 +18,9 @@ const addBook = async (root, args, context) => {
   if (!context.user) {
     throw new Error('Only logged in users may add a book to the library');
   }
+
+  // to allow code outside the try/catch block access
+  let bookAdded;
 
   try {
     //check if  author exists
@@ -32,13 +37,17 @@ const addBook = async (root, args, context) => {
       ...args,
       author: author._id
     });
-
-    return book.toJSON();
+    
+    bookAdded = book.toJSON();
+    //return book.toJSON();
   } catch (err) {
     throw new UserInputError(err.message, {
       invalidArgs: args
     });
   }
+
+  pubsub.publish('BOOK_ADDED', { bookAdded })
+  return bookAdded;
 };
 
 const editAuthor = async (root, args, context) => {
@@ -104,6 +113,13 @@ const login = async(root, args) => {
   }
 }
 
+//Subscription to be added to resolver
+const Subscription = {
+  bookAdded: {
+    subscribe: () => pubsub.asyncIterator(['PERSON_ADDED'])
+  }
+}
+
 const Mutation = {
   addBook,
   editAuthor,
@@ -111,4 +127,7 @@ const Mutation = {
   login
 }
 
-module.exports = Mutation;
+module.exports = {
+  Mutation,
+  Subscription
+}
