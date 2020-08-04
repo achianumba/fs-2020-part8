@@ -47,7 +47,7 @@ const addBook = async (root, args, context) => {
   }
 
   pubsub.publish('BOOK_ADDED', { bookAdded })
-  return bookAdded;
+  return bookAdded
 };
 
 const editAuthor = async (root, args, context) => {
@@ -116,7 +116,7 @@ const login = async(root, args) => {
 //Subscription to be added to resolver
 const Subscription = {
   bookAdded: {
-    subscribe: () => pubsub.asyncIterator(['PERSON_ADDED'])
+    subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
   }
 }
 

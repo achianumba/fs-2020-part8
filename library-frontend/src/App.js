@@ -5,6 +5,8 @@ import NewBook from './components/NewBook';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Recommended from './components/Recommended';
+import { useSubscription } from '@apollo/client';
+import { BOOK_ADDED } from './subscriptions';
 
 const App = () => {
   const [page, setPage] = useState('authors');
@@ -15,6 +17,12 @@ const App = () => {
       setToken(localStorage.token);
     }
   }, []);
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      alert(`New book:\n"${subscriptionData.data.bookAdded.title}" has been added to the library`);
+    }
+  });
 
   const logout = e => {
     setToken(null);
