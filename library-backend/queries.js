@@ -2,8 +2,7 @@ const {
     getBooks,
     getBooksByAuthor,
     getBooksByGenre,
-    getBooksByAuthorAndGenre,
-    countBooks
+    getBooksByAuthorAndGenre
 } = require('./models/books');
 
 const { 
@@ -36,7 +35,6 @@ const me = async (root, args, context) => {
 const Query = {
     allBooks,
     allAuthors: async () => getAuthors(),
-    bookCount: async () => countBooks(),
     authorCount: () => countAuthors(),
     me
 };

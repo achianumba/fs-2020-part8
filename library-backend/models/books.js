@@ -47,10 +47,6 @@ const bookSchema = new Schema({
     return Book.find({ author });
   }
 
-  const countBooks = () => {
-    return Book.countDocuments({});
-  }
-
   const countBooksByAuthor = (id) => {
     return Book.countDocuments({ author: id });
   }
@@ -62,12 +58,6 @@ const bookSchema = new Schema({
     getBooksByAuthorAndGenre,
     getBooksByAuthor,
     getBooksByGenre,
-    countBooks,
     countBooksByAuthor,
     createBook
   };
-
-  //Book.deleteMany({}).then(x => console.log(x));
-  //getBooks().then(x => console.dir(x.map(x => x.toJSON())));
-  //countBooksByAuthor('5eeea41c07b5f7284c183f93')
-  //.then(x => console.log(x))

@@ -9,7 +9,8 @@ const pubsub = new PubSub();
 const { 
   createAuthor,
   getAuthorByName,
-  editAuthorBirthYear
+  editAuthorBirthYear,
+  updateBookCount
 } = require('./models/authors');
 
 const { createBook } = require('./models/books');
@@ -37,9 +38,10 @@ const addBook = async (root, args, context) => {
       ...args,
       author: author._id
     });
+
+    await updateBookCount(author);
     
     bookAdded = book.toJSON();
-    //return book.toJSON();
   } catch (err) {
     throw new UserInputError(err.message, {
       invalidArgs: args
