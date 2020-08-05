@@ -5,12 +5,14 @@ import NewBook from './components/NewBook';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Recommended from './components/Recommended';
-import { useSubscription } from '@apollo/client';
+import { useSubscription, useApolloClient } from '@apollo/client';
 import { BOOK_ADDED } from './subscriptions';
+import { ALL_BOOKS } from './queries';
 
 const App = () => {
   const [page, setPage] = useState('authors');
   const [token, setToken] = useState(null);
+  const client = useApolloClient();
 
   useEffect(() => {
     if (localStorage.token) {
@@ -18,15 +20,33 @@ const App = () => {
     }
   }, []);
 
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (booksInStore, newBook) => {
+      return booksInStore.map(book => book.id).includes(newBook.id);
+    }
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS });
+
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks : dataInStore.allBooks.concat(addedBook) }
+      });
+    }
+  }
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      alert(`New book:\n"${subscriptionData.data.bookAdded.title}" has been added to the library`);
+      const addedBook = subscriptionData.data.bookAdded;
+      alert(`New book:\n"${addedBook.title}" has been added to the library`);
+      updateCacheWith(addedBook)
     }
   });
 
   const logout = e => {
     setToken(null);
     localStorage.clear();
+    client.resetStore();
   }
 
   return (
